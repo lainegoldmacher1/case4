@@ -39,3 +39,41 @@ def submit_survey():
 
 if __name__ == "__main__":
     app.run(port=0, debug=True)
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Optional
+import hashlib
+from datetime import datetime
+
+app = FastAPI()
+
+class Submission(BaseModel):
+    email: str
+    age: int
+    submission_id: Optional[str] = None
+    user_agent: Optional[str] = None
+
+def hash_sha256(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+def generate_submission_id(email: str) -> str:
+    now = datetime.utcnow().strftime("%Y%m%d%H")
+    return hash_sha256(email + now)
+
+def save_submission(submission: Submission):
+    record = {
+        "email": hash_sha256(submission.email),
+        "age": hash_sha256(str(submission.age)),
+        "submission_id": submission.submission_id,
+        "user_agent": submission.user_agent
+    }
+    with open("submissions.json", "a") as f:
+        f.write(f"{record}\n")
+
+@app.post("/submit")
+def submit(submission: Submission):
+    if not submission.submission_id:
+        submission.submission_id = generate_submission_id(submission.email)
+    save_submission(submission)
+    return {"message": "Submission saved successfully", "submission_id": submission.submission_id}

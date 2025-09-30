@@ -4,7 +4,6 @@ from flask_cors import CORS
 from pydantic import ValidationError
 from models import SurveySubmission, StoredSurveyRecord
 from storage import append_json_line
-from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
 import hashlib
@@ -40,8 +39,6 @@ def submit_survey():
     )
     append_json_line(record.dict())
     return jsonify({"status": "ok"}), 201
-
-app = FastAPI()
 
 class Submission(BaseModel):
     email: str

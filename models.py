@@ -25,3 +25,4 @@ class SurveySubmission(BaseModel):
 class StoredSurveyRecord(SurveySubmission):
     received_at: datetime
     ip: str
+    submission_id: str

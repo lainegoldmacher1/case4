@@ -36,7 +36,7 @@ def submit_survey():
         **submission.dict(),
         received_at=datetime.now(timezone.utc),
         ip=request.headers.get("X-Forwarded-For", request.remote_addr or "")
-        submission_id = generate_submission_id(submission.email)
+        submission_id = generate_submission_id(str(submission.email))
     )
     append_json_line(record.dict())
     return jsonify({"status": "ok"}), 201

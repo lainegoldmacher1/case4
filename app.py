@@ -41,9 +41,6 @@ def submit_survey():
     append_json_line(record.dict())
     return jsonify({"status": "ok"}), 201
 
-if __name__ == "__main__":
-    app.run(port=0, debug=True)
-
 class Submission(BaseModel):
     email: str
     age: int
@@ -73,3 +70,6 @@ def submit(submission: Submission):
         submission.submission_id = generate_submission_id(submission.email)
     save_submission(submission)
     return {"message": "Submission saved successfully", "submission_id": submission.submission_id}
+
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)
